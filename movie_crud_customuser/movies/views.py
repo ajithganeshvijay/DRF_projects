@@ -3,13 +3,22 @@ from urllib import response
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from movies.models import Movie
-from movies.serializer import MovieSerializer
+from movies.serializer import MovieSerializer,UserSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
 from rest_framework import generics
 from rest_framework.filters import SearchFilter
 
+
+class RegisterAPIView(APIView):
+    def post(self,request):
+        serializer_instances=UserSerializer(data=request.data)
+        if serializer_instances.is_valid():
+            serializer_instances.save()
+            return Response(serializer_instances.data)
+        else:
+            return Response(serializer_instances.errors)
 
 
 #               Search APIView

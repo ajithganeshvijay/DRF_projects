@@ -34,5 +34,6 @@ urlpatterns = [
     # path("allmovies",views.MovieList.as_view()),
     # path('moviesretreiveupdatedestroy/<int:pk>',views.MovieRetrieveUpdateDelete.as_view()),
     path('searchmovies',views.SearchAPIView.as_view()),
-    path('',include(router.urls)) #3 ,
+    path('',include(router.urls)), #3 ,
+    path('userregister',views.RegisterAPIView.as_view())
 ]

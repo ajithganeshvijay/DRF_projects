@@ -17,11 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from rest_framework.routers import DefaultRouter
+from rest_framework.authtoken.views import obtain_auth_token
 
 from movies import views
 
 router=DefaultRouter() #1
 router.register('movies',views.MovieView) #2
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,5 +36,8 @@ urlpatterns = [
     # path("allmovies",views.MovieList.as_view()),
     # path('moviesretreiveupdatedestroy/<int:pk>',views.MovieRetrieveUpdateDelete.as_view()),
     path('searchmovies',views.SearchAPIView.as_view()),
-    path('',include(router.urls)) #3 ,
-]
+    path('',include(router.urls)) ,#3 ,,
+    path('register',views.RegisterAPIView.as_view()),
+    # path('login',views.Obtain_Auth_Token.as_view()),
+    path('login',obtain_auth_token),
+    path('Logout',views.LogoutAPIView.as_view())]

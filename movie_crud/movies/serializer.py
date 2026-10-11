@@ -2,6 +2,7 @@ from rest_framework import serializers
 from movies.models import Movie
 from django.contrib.auth.models import User
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
@@ -9,11 +10,13 @@ class UserSerializer(serializers.ModelSerializer):
                  'password',
                  'email',
                  'first_name',
-                 'last_name']
+                 'last_name',
+                 ]
 
     #to create user account we use USer.objects.create_user for password hashing
     def create(self,validated_data):
         u=User.objects.create_user(**validated_data)
+        u.save()
         return u
 # class MovieSerializer(serializers.Serializer):
 #     title=serializers.CharField(max_length=100)

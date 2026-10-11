@@ -1,19 +1,27 @@
 from rest_framework import serializers
-from movies.models import Movie
-from django.contrib.auth.models import User
+from movies.models import Movie,MyUser
+from django.contrib.auth.models import AbstractUser
+from django.core.mail import send_mail
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model=User
+        model=MyUser
         fields =['username',
                  'password',
                  'email',
                  'first_name',
-                 'last_name']
+                 'last_name',
+                 'phone',
+                 'address']
 
     #to create user account we use USer.objects.create_user for password hashing
     def create(self,validated_data):
-        u=User.objects.create_user(**validated_data)
+        u=MyUser.objects.create_user(**validated_data)
+        u.save()
+        send_mail("User Registration Confirmation mail",
+                  "Your account successfully created",
+                  "ajithganeshvijay2000@gmail.com",
+                  [u.email,],fail_silently=True)
         return u
 # class MovieSerializer(serializers.Serializer):
 #     title=serializers.CharField(max_length=100)

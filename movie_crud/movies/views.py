@@ -1,16 +1,46 @@
 from urllib import response
 
+from django.contrib.auth.password_validation import password_changed
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
+
 from rest_framework.views import APIView
+
+from movies import serializer
 from movies.models import Movie
-from movies.serializer import MovieSerializer
+from movies.serializer import MovieSerializer, UserSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
 from rest_framework import generics
 from rest_framework.filters import SearchFilter
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
 
 
+# class Obtain_Auth_Token(APIView):
+#     def post(self,request):
+#         data=request.data
+#         u=data['username']
+#         p=data['password']
+#
+#         user=authenticate(username=u,password=p)
+#         if user:
+#             token,created=Token.objects.get_or_create(user=user)
+#
+#             return  JsonResponse({"Token":token.key})
+#
+#         else:
+#             return JsonResponse({"Message":"Invalid UserCredential"})
+
+class RegisterAPIView(APIView):
+    def post(self,request):
+        serializer_instances=UserSerializer(data=request.data)
+        if serializer_instances.is_valid():
+            serializer_instances.save()
+            return Response(serializer_instances.data)
+        else:
+            return Response(serializer_instances.errors)
 
 #               Search APIView
 class SearchAPIView(generics.ListAPIView):
@@ -46,10 +76,13 @@ class SearchAPIView(generics.ListAPIView):
 
 
 #                        Using ViewSets
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 class MovieView(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset=Movie.objects.all()
     serializer_class =MovieSerializer
+
 
 #                        Generics class
 # from rest_framework import generics
@@ -141,4 +174,10 @@ class MovieView(viewsets.ModelViewSet):
 #         return Response({"Message":"Data deleted successfully"},status=status.HTTP_301_MOVED_PERMANENTLY)
 
 
+class LogoutAPIView(APIView):
+    permission_classes = [IsAuthenticated,]
+    def get(self,request): #logged in user
+        print(self.request.user)
+        self.request.user.auth_token.delete()
 
+        return Response({"Message":"Logout Successfully"})
